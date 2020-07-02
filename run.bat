@@ -6,7 +6,7 @@ set java=java
 
 if /I "%1" EQU "compile" (
     rem compile ---------------------
-    cmd /c %mvn% clean package
+    cmd /c %mvn% -P deploy clean package
 
     rem deploy ---------------------
     if exist deploy rd /s /q deploy

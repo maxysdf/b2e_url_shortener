@@ -6,7 +6,7 @@ java=$(which java)
 
 if [ "$1" == "compile" ]; then
     # compile ---------------------
-    $mvn clean package
+    $mvn -P deploy clean package
 
     # deploy ---------------------
     [ -d deploy ] && rm -rf deploy
