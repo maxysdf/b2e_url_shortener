@@ -1,5 +1,7 @@
 package idv.maxy.b2e_url_shortener.controller;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +36,10 @@ public class B2EController {
 	 */
 	@ResponseBody
 	@PostMapping(path="/s")
-	public String shorten(@RequestBody String url ) {
+	public String shorten(@RequestBody Map<String, String> params ) {
 		String srt = null;
 		try {
+			String url = params.get("url");
 			srt = b2eService.shorten(url);	
 		} catch(Exception ex) {
 			logger.error("shorten failed", ex);
