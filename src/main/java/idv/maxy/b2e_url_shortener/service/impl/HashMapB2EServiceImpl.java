@@ -1,7 +1,11 @@
 package idv.maxy.b2e_url_shortener.service.impl;
 
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,8 +38,33 @@ public class HashMapB2EServiceImpl implements B2EService {
 	public String shorten(String url) throws Exception {
 		if(url == null) { return null; }
 		
-		// TODO: normalize
+		// normalize
 		String inStr = url;
+		URL u = new URL(url);
+		if(u != null) {
+			// query重新依字母順序組合
+			String query = u.getQuery();
+			if(query != null) {
+			    Map<String, String> queryPairs = new TreeMap<>();
+			    String[] pairs = query.split("&");
+			    for (String pair : pairs) {
+			        int idx = pair.indexOf("=");
+			        queryPairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+			    }
+				query = queryPairs.entrySet().stream()
+					.map(e->String.format("%s=%s", e.getKey(), e.getValue()))
+					.collect(Collectors.joining("&"));
+			}
+		
+			inStr = String.format("%s://%s%s%s%s", 
+				u.getProtocol(),
+				u.getHost(),
+				u.getPort() != -1 ? (":"+u.getPort()) : "",
+				u.getPath(),
+				query != null ? "?"+query : ""
+			);
+		}
+		
 		if(store.containsKey(inStr)) {
 			return store.get(inStr);
 		}
